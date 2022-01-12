@@ -37,6 +37,14 @@ async function run() {
             const result = await tasksCollection.deleteOne(query);
             res.json(result)
         })
+        app.put('/tasks', async (req, res) => {
+            const changedTask = req.body
+            delete changedTask._id
+            const filter = { timeStamp: changedTask.timeStamp };
+            const updateDoc = { $set: changedTask };
+            const result = await tasksCollection.updateOne(filter, updateDoc, { upsert: false });
+            res.json(result)
+        })
     } finally {
         // await client.close()
     }
