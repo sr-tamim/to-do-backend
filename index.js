@@ -57,7 +57,7 @@ run().catch(console.dir)
 
 // app.listen(port, () => console.log(`listening to port http://localhost:${port}`))
 
-app.use('/.netlify/functions/server', router);  // path must route to lambda
+app.use('/.netlify/functions/index', router);  // path must route to lambda
 app.use('/', (req, res) => res.sendFile(path.join(__dirname, './index.html')));
 
 module.exports = app;
