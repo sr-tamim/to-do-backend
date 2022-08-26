@@ -4,8 +4,9 @@
   "description": "to-do app made by SR TAMIM",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
-    "start-dev": "nodemon index.js",
+    "build": "netlify-lambda build express",
+    "start": "node server-local.js",
+    "dev": "nodemon server-local.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Saifur Rahman Tamim",
@@ -15,5 +16,10 @@
     "dotenv": "^10.0.0",
     "express": "^4.17.2",
     "mongodb": "^4.3.0"
+  },
+  "devDependencies": {
+    "netlify-lambda": "^2.0.15",
+    "nodemon": "^2.0.19",
+    "serverless-http": "^3.0.2"
   }
 }
