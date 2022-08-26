@@ -15,7 +15,7 @@ const router = express.Router()
 router.get('/', (req, res) => res.send(`to-do app server is running on port ${port}`))
 
 
-const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.6ghhv.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@tasks-cluster.0fwv4yi.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 
 
@@ -29,8 +29,9 @@ router.get('/tasks', async (req, res) => {
     const result = await cursor.toArray()
     res.json(result)
 })
-router.post('/tasks', async (req, res) => {
-    const result = await tasksCollection.insertOne(req.body)
+router.post('/tasks/:email', async (req, res) => {
+    const newTasksCollection = client.db('to-do-srt').collection(req.params.email)
+    const result = await newTasksCollection.insertOne(req.body)
     res.json(result)
 })
 router.delete('/tasks', async (req, res) => {
@@ -49,7 +50,7 @@ router.put('/tasks', async (req, res) => {
 })
 
 
-app.use('/.netlify/functions/index', router);  // path must route to lambda
+app.use('/.netlify/functions/server', router);  // path must route to lambda
 app.use('/', (req, res) => res.sendFile(path.join(__dirname, './index.html')));
 
 module.exports = app;
