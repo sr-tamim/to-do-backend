@@ -4,7 +4,7 @@
   "description": "to-do app made by SR TAMIM",
   "main": "index.js",
   "scripts": {
-    "build": "netlify-lambda build express",
+    "build": "netlify-lambda build /",
     "start": "node server-local.js",
     "dev": "nodemon server-local.js",
     "test": "echo \"Error: no test specified\" && exit 1"
