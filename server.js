@@ -22,31 +22,46 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 
 client.connect()
 
-const tasksCollection = client.db('toDoApp').collection('tasks')
-
-router.get('/tasks', async (req, res) => {
-    const cursor = tasksCollection.find({})
+async function getAllTasks(collection) {
+    const cursor = collection.find({})
     const result = await cursor.toArray()
+    return result
+}
+
+router.get('/tasks/:email', async (req, res) => {
+    const tasksCollection = client.db('to-do-srt').collection(req.params.email)
+    const result = await getAllTasks(tasksCollection)
     res.json(result)
 })
 router.post('/tasks/:email', async (req, res) => {
-    const newTasksCollection = client.db('to-do-srt').collection(req.params.email)
-    const result = await newTasksCollection.insertOne(req.body)
-    res.json(result)
+    const tasksCollection = client.db('to-do-srt').collection(req.params.email)
+    const result = await tasksCollection.insertOne(req.body)
+    const allTasks = await getAllTasks(tasksCollection)
+    res.json({ ...result, allTasks })
 })
-router.delete('/tasks', async (req, res) => {
-    const { timeStamp } = req.body
-    const query = { timeStamp };
+router.post('/tasks/addMultipleTasks/:email', async (req, res) => {
+    const tasksCollection = client.db('to-do-srt').collection(req.params.email)
+    const result = await tasksCollection.insertMany(req.body)
+    const allTasks = await getAllTasks(tasksCollection)
+    res.json({ ...result, allTasks })
+})
+router.delete('/tasks/:email', async (req, res) => {
+    const tasksCollection = client.db('to-do-srt').collection(req.params.email)
+    const { taskAddedTime } = req.body
+    const query = { taskAddedTime };
     const result = await tasksCollection.deleteOne(query);
-    res.json(result)
+    const allTasks = await getAllTasks(tasksCollection)
+    res.json({ ...result, allTasks })
 })
-router.put('/tasks', async (req, res) => {
+router.put('/tasks/:email', async (req, res) => {
+    const tasksCollection = client.db('to-do-srt').collection(req.params.email)
     const changedTask = req.body
     delete changedTask._id
-    const filter = { timeStamp: changedTask.timeStamp };
+    const filter = { taskAddedTime: changedTask.taskAddedTime };
     const updateDoc = { $set: changedTask };
     const result = await tasksCollection.updateOne(filter, updateDoc, { upsert: false });
-    res.json(result)
+    const allTasks = await getAllTasks(tasksCollection)
+    res.json({ ...result, allTasks })
 })
 
 
