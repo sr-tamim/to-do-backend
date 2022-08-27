@@ -91,7 +91,7 @@ router.put('/tasks/:email', async (req, res) => {
     res.json({ ...result, allTasks })
 })
 
-
+/* ===== setup backend to deploy as a netlify serverless function ====== */
 app.use('/.netlify/functions/server', router);  // path must route to lambda
 app.use('/', (req, res) => res.sendFile(path.join(__dirname, './index.html')));
 
