@@ -19,7 +19,6 @@ router.get('/', (req, res) => res.send(`to-do app server is running on port ${po
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@tasks-cluster.0fwv4yi.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 
-client.connect()
 
 // get all tasks from given collection
 async function getAllTasks(collection) {
@@ -31,15 +30,21 @@ async function getAllTasks(collection) {
 router.get('/tasks/:email', async (req, res) => {
     // connect mongodb
     await client.connect()
+
     // create/get the collection of tasks of given email
     const tasksCollection = client.db('to-do-srt').collection(req.params.email)
 
     const result = await getAllTasks(tasksCollection)
     res.json(result)
+
+    // close mongodb connection
     client.close()
 })
 // add new single task api
 router.post('/tasks/:email', async (req, res) => {
+    // connect mongodb
+    await client.connect()
+
     // create/get the collection of tasks of given email
     const tasksCollection = client.db('to-do-srt').collection(req.params.email)
 
@@ -48,9 +53,15 @@ router.post('/tasks/:email', async (req, res) => {
 
     const allTasks = await getAllTasks(tasksCollection)
     res.json({ ...result, allTasks })
+
+    // close mongodb connection
+    client.close()
 })
 // add an array of new tasks api
 router.post('/tasks/addMultipleTasks/:email', async (req, res) => {
+    // connect mongodb
+    await client.connect()
+    
     // create/get the collection of tasks of given email
     const tasksCollection = client.db('to-do-srt').collection(req.params.email)
 
@@ -59,9 +70,15 @@ router.post('/tasks/addMultipleTasks/:email', async (req, res) => {
 
     const allTasks = await getAllTasks(tasksCollection)
     res.json({ ...result, allTasks })
+
+    // close mongodb connection
+    client.close()
 })
 // delete single task api
 router.delete('/tasks/:email', async (req, res) => {
+    // connect mongodb
+    await client.connect()
+    
     // create/get the collection of tasks of given email
     const tasksCollection = client.db('to-do-srt').collection(req.params.email)
 
@@ -74,9 +91,15 @@ router.delete('/tasks/:email', async (req, res) => {
 
     const allTasks = await getAllTasks(tasksCollection)
     res.json({ ...result, allTasks })
+
+    // close mongodb connection
+    client.close()
 })
 // update single task api
 router.put('/tasks/:email', async (req, res) => {
+    // connect mongodb
+    await client.connect()
+    
     // create/get the collection of tasks of given email
     const tasksCollection = client.db('to-do-srt').collection(req.params.email)
 
@@ -91,6 +114,9 @@ router.put('/tasks/:email', async (req, res) => {
 
     const allTasks = await getAllTasks(tasksCollection)
     res.json({ ...result, allTasks })
+
+    // close mongodb connection
+    client.close()
 })
 
 /* ===== setup backend to deploy as a netlify serverless function ====== */
