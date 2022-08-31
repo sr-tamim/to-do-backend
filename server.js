@@ -19,7 +19,6 @@ router.get('/', (req, res) => res.send(`to-do app server is running on port ${po
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@tasks-cluster.0fwv4yi.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 
-// connect mongodb
 client.connect()
 
 // get all tasks from given collection
@@ -30,11 +29,14 @@ async function getAllTasks(collection) {
 }
 // get all tasks api
 router.get('/tasks/:email', async (req, res) => {
+    // connect mongodb
+    await client.connect()
     // create/get the collection of tasks of given email
     const tasksCollection = client.db('to-do-srt').collection(req.params.email)
 
     const result = await getAllTasks(tasksCollection)
     res.json(result)
+    client.close()
 })
 // add new single task api
 router.post('/tasks/:email', async (req, res) => {
