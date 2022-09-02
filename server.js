@@ -57,28 +57,11 @@ router.post('/tasks/:email', async (req, res) => {
     // close mongodb connection
     client.close()
 })
-// add an array of new tasks api
-router.post('/tasks/addMultipleTasks/:email', async (req, res) => {
-    // connect mongodb
-    await client.connect()
-    
-    // create/get the collection of tasks of given email
-    const tasksCollection = client.db('to-do-srt').collection(req.params.email)
-
-    // add multiple tasks
-    const result = await tasksCollection.insertMany(req.body)
-
-    const allTasks = await getAllTasks(tasksCollection)
-    res.json({ ...result, allTasks })
-
-    // close mongodb connection
-    client.close()
-})
 // delete single task api
 router.delete('/tasks/:email', async (req, res) => {
     // connect mongodb
     await client.connect()
-    
+
     // create/get the collection of tasks of given email
     const tasksCollection = client.db('to-do-srt').collection(req.params.email)
 
@@ -99,7 +82,7 @@ router.delete('/tasks/:email', async (req, res) => {
 router.put('/tasks/:email', async (req, res) => {
     // connect mongodb
     await client.connect()
-    
+
     // create/get the collection of tasks of given email
     const tasksCollection = client.db('to-do-srt').collection(req.params.email)
 
@@ -114,6 +97,31 @@ router.put('/tasks/:email', async (req, res) => {
 
     const allTasks = await getAllTasks(tasksCollection)
     res.json({ ...result, allTasks })
+
+    // close mongodb connection
+    client.close()
+})
+// update an array of new tasks api
+router.post('/tasks/updateMultipleTasks/:email', async (req, res) => {
+    // connect mongodb
+    await client.connect()
+
+    // create/get the collection of tasks of given email
+    const tasksCollection = client.db('to-do-srt').collection(req.params.email)
+
+    // update multiple tasks
+    const result = await tasksCollection.bulkWrite(req.body.map(task => {
+        delete task._id
+        return {
+            updateOne: ({
+                filter: ({ taskAddedTime: task.taskAddedTime }),
+                update: ({ $set: task })
+            })
+        }
+    }))
+
+    const allTasks = await getAllTasks(tasksCollection)
+    res.json({ ...result.result, allTasks })
 
     // close mongodb connection
     client.close()
