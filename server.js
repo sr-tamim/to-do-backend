@@ -28,22 +28,19 @@ async function getAllTasks(collection) {
 }
 // get all tasks api
 router.get('/tasks/:email', async (req, res) => {
-    // connect mongodb
-    await client.connect()
+    // connect mongodb    
+    (client?.topology?.isConnected() || await client.connect())
 
     // create/get the collection of tasks of given email
     const tasksCollection = client.db('to-do-srt').collection(req.params.email)
 
     const result = await getAllTasks(tasksCollection)
     res.json(result)
-
-    // close mongodb connection
-    client.close()
 })
 // add new single task api
 router.post('/tasks/:email', async (req, res) => {
-    // connect mongodb
-    await client.connect()
+    // connect mongodb    
+    (client?.topology?.isConnected() || await client.connect())
 
     // create/get the collection of tasks of given email
     const tasksCollection = client.db('to-do-srt').collection(req.params.email)
@@ -53,14 +50,11 @@ router.post('/tasks/:email', async (req, res) => {
 
     const allTasks = await getAllTasks(tasksCollection)
     res.json({ ...result, allTasks })
-
-    // close mongodb connection
-    client.close()
 })
 // delete single task api
 router.delete('/tasks/:email', async (req, res) => {
     // connect mongodb
-    await client.connect()
+    (client?.topology?.isConnected() || await client.connect())
 
     // create/get the collection of tasks of given email
     const tasksCollection = client.db('to-do-srt').collection(req.params.email)
@@ -74,14 +68,11 @@ router.delete('/tasks/:email', async (req, res) => {
 
     const allTasks = await getAllTasks(tasksCollection)
     res.json({ ...result, allTasks })
-
-    // close mongodb connection
-    client.close()
 })
 // update single task api
 router.put('/tasks/:email', async (req, res) => {
     // connect mongodb
-    await client.connect()
+    (client?.topology?.isConnected() || await client.connect())
 
     // create/get the collection of tasks of given email
     const tasksCollection = client.db('to-do-srt').collection(req.params.email)
@@ -97,14 +88,11 @@ router.put('/tasks/:email', async (req, res) => {
 
     const allTasks = await getAllTasks(tasksCollection)
     res.json({ ...result, allTasks })
-
-    // close mongodb connection
-    client.close()
 })
 // update an array of new tasks api
 router.post('/tasks/updateMultipleTasks/:email', async (req, res) => {
     // connect mongodb
-    await client.connect()
+    (client?.topology?.isConnected() || await client.connect())
 
     // create/get the collection of tasks of given email
     const tasksCollection = client.db('to-do-srt').collection(req.params.email)
@@ -122,9 +110,6 @@ router.post('/tasks/updateMultipleTasks/:email', async (req, res) => {
 
     const allTasks = await getAllTasks(tasksCollection)
     res.json({ ...result.result, allTasks })
-
-    // close mongodb connection
-    client.close()
 })
 
 /* ===== setup backend to deploy as a netlify serverless function ====== */
