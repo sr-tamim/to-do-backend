@@ -13,13 +13,13 @@
   "license": "ISC",
   "dependencies": {
     "cors": "^2.8.5",
-    "dotenv": "^10.0.0",
+    "dotenv": "^16.0.3",
     "express": "^4.17.2",
     "mongodb": "^4.3.0"
   },
   "devDependencies": {
     "netlify-lambda": "^2.0.15",
-    "nodemon": "^2.0.19",
+    "nodemon": "^2.0.20",
     "serverless-http": "^3.0.2"
   }
 }
